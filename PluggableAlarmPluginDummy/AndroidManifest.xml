@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="jp.androidapp.apps.pluggablealarm.plugin.dummy"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="15" />
+<!-- 
+BaseAlarmActivityで使用しているので、これを継承するActivityは以下のパーミッションが必要
+ -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+    
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="jp.androidapp.apps.pluggablealarm.plugin.dummy.PluginSettingActivity"
+            android:label="@string/setting_name" >
+            
+<!-- 
+プラグインとして動くアラーム設定画面は
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+ではなく
+            <intent-filter>
+                <action android:name="jp.androidapp.tamesarerualarm.ACTION_OPEN_ALARM_SETTING" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+を使うこと。
+このアクションで起動する仕様なので、コピペで良い。
+ -->            
+            
+            <intent-filter>
+                <action android:name="jp.androidapp.apps.pluggablealarm.ACTION_OPEN_ALARM_SETTING" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+<!--
+既存のアラーム設定編集用に、このプラグイン独自のアクションでも呼べるようにする。
+設定画面での編集→ACTION_OPEN_ALARM_SETTING
+次回アラーム時間の計算(関数的に使用)→ACTION_NEXT_ALARM
+次回スヌーズ時間の計算(関数的に使用)→ACTION_NEXT_SNOOZE
+上記3つが必要。担当するActivityは別でも良い。
+これはこのプラグインのパッケージ名+".ACTION_OPEN_ALARM_SETTING"で良いと思われるが、ユニークであれば自由にしてよい。
+カテゴリは
+<category android:name="android.intent.category.DEFAULT" />
+で良い。
+--> 
+            <intent-filter>
+                <action android:name="jp.androidapp.apps.pluggablealarm.plugin.dummy.ACTION_OPEN_ALARM_SETTING" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="jp.androidapp.apps.pluggablealarm.plugin.dummy.ACTION_NEXT_ALARM" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="jp.androidapp.apps.pluggablealarm.plugin.dummy.ACTION_NEXT_SNOOZE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="jp.androidapp.apps.pluggablealarm.plugin.dummy.PluginAlarmActivity"
+            android:label="@string/app_name"
+            />
+<!-- 
+本体からAlarmManagerにEXTRAS_ALARM_SPECIAL_ACTIONで渡したActionでBroadcastするので、
+それを受け取りActivityなりServiceなりを起動するReceiverを用意する。
+当然EXTRAS_ALARM_SPECIAL_ACTIONで渡したこのプラグイン用のActionを受け付けるようにintent-filterを設定する
+ -->
+    	<receiver android:name="jp.androidapp.apps.pluggablealarm.plugin.dummy.PluginAlarmReceiver" android:process=":remote">
+            <intent-filter>
+    	    	<action android:name="jp.androidapp.apps.pluggablealarm.plugin.dummy.ACTION_ALARM" />
+    	    </intent-filter>
+    	</receiver> 
+    </application>
+
+</manifest>
