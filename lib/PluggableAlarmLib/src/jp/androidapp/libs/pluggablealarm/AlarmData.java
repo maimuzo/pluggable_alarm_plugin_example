@@ -5,7 +5,8 @@ import android.content.Intent;
 public class AlarmData{
 	public String time;
 	public String weeks;
-	public String title;
+    public String title;
+    public String pluginNanme;
 	public boolean isEnable;
 	public long nextDelayInMillis;
 	public String pickedAlarmResource;
@@ -18,8 +19,9 @@ public class AlarmData{
 	public static AlarmData from(Intent data){
 		AlarmData alarmData = new AlarmData();
 		alarmData.time = data.getStringExtra(IntentParam.EXTRAS_TIME);
-		alarmData.weeks = data.getStringExtra(IntentParam.EXTRAS_WEEKS);
-		alarmData.title = data.getStringExtra(IntentParam.EXTRAS_PLUGIN_NAME);
+        alarmData.weeks = data.getStringExtra(IntentParam.EXTRAS_WEEKS);
+        alarmData.title = data.getStringExtra(IntentParam.EXTRAS_ALARM_TITLE);
+		alarmData.pluginNanme = data.getStringExtra(IntentParam.EXTRAS_PLUGIN_NAME);
 		alarmData.isEnable = true;
 		alarmData.nextDelayInMillis = data.getLongExtra(IntentParam.EXTRAS_NEXT_DELAY_IN_MILLIS, 0);
 		alarmData.pickedAlarmResource = data.getStringExtra(IntentParam.EXTRAS_PICKED_ALARM_RESOURCE);
@@ -41,13 +43,13 @@ public class AlarmData{
 	
 	@Override
 	public String toString() {
-		return "AlarmData [time=" + time + ", weeks=" + weeks + ", title="
-				+ title + ", isEnable=" + isEnable + ", nextDelayInMillis="
-				+ nextDelayInMillis + ", alarmFilePath=" + pickedAlarmResource
-				+ ", alarmSpecialAction=" + alarmSpecialAction
-				+ ", editSpecialAction=" + editSpecialAction
-				+ ", nextAlarmSpecialAction=" + nextAlarmSpecialAction
-				+ ", nextSnoozeSpecialAction=" + nextSnoozeSpecialAction
-				+ ", alarmId=" + alarmId + "]";
+        return "AlarmData [time=" + time + ", weeks=" + weeks + ", title=" + title + ", pluginNanme="
+                + pluginNanme + ", isEnable=" + isEnable + ", nextDelayInMillis="
+                + nextDelayInMillis + ", alarmFilePath=" + pickedAlarmResource
+                + ", alarmSpecialAction=" + alarmSpecialAction
+                + ", editSpecialAction=" + editSpecialAction
+                + ", nextAlarmSpecialAction=" + nextAlarmSpecialAction
+                + ", nextSnoozeSpecialAction=" + nextSnoozeSpecialAction
+                + ", alarmId=" + alarmId + "]";
 	}
 }
