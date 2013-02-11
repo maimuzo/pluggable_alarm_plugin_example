@@ -1,6 +1,8 @@
 package jp.androidapp.libs.pluggablealarm;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -73,15 +75,20 @@ public class AlarmUtil {
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
+
         // 次のアラーム鳴動曜日までに、加算する日数を計算する
         int nextRingDaysOfWeek = getNextDaysOfWeek(c,daysOfWeek);
         int addDays = getAddDay(c,nextRingDaysOfWeek);
-        if (addDays > 0) c.add(Calendar.DAY_OF_WEEK, addDays);
+        if (addDays > 0) {
+            c.add(Calendar.DAY_OF_WEEK, addDays);
+        }
+
         return c;
     }
 
     /**
-     * 次のアラーム鳴動は何曜日かを返す
+     * 次のアラーム鳴動は何曜日かを返す.
+     * 指定した日付の曜日が曜日配列の中に存在する場合は、その曜日を返す.
      * 曜日配列　月水金 = {Calendar.MONDAY,Calendar.WEDNESDAY,Calendar.WEDNESDAY,Calendar.FRIDAY}
      * @return 次のアラーム鳴動曜日 Calendar.MONDAY~
      */
@@ -96,8 +103,8 @@ public class AlarmUtil {
         int nowDOW = c.get(Calendar.DAY_OF_WEEK);
         for (int i = 0; i < dowList.length; i++) {
             // 配列をチェックして、現在の曜日より大きい値が出てくるまで探す
-            // ex 今：月曜日　配列：月水金　→　次に鳴動させるのは水曜日
-            if (dowList[i] > nowDOW) {
+            // ex 今：月曜日　配列：月水金　→　次に鳴動させるのは月曜日
+            if ((dowList[i] == nowDOW) || (dowList[i] >= nowDOW)) {
                 return dowList[i];
             }
         }
@@ -144,6 +151,38 @@ public class AlarmUtil {
         // 計算した日付を返す
         return addDays;
     }
+    
+    /**
+     * 曜日文字列に対応した曜日情報を返します.
+     * @param weeks 曜日リスト(区切り文字はカンマのみ)
+     * @return 曜日配列(Calendar.SUNDAY～に対応した数値型配列)
+     */
+    public static ArrayList<Integer> getDayOfWeekList(Context context, String weeks) {
 
+        // 文字列をカンマで区切る
+        String[] weeklist = weeks.split(",");
 
+        // 曜日データのリソースを取得
+        String[] displayList = context.getResources().getStringArray(R.array.array_day_of_weeks);
+
+        // 曜日リストのハッシュマップを生成
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        int value = Calendar.SUNDAY;
+        for (int i = 0; i < displayList.length; i++) {
+            map.put(displayList[i], value);
+            value++;
+        }
+
+        // ハッシュマップから曜日文字列に対応した曜日情報を生成
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        for (int i = 0; i < weeklist.length; i++) {
+            if (map.containsKey(weeklist[i])) {
+                list.add(map.get(weeklist[i]));
+            }
+        }
+
+        return list;
+
+    }
+    
 }
