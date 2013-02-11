@@ -12,6 +12,7 @@ public class IntentParam {
 	public static final String EXTRAS_PLUGIN_NAME = "extras_plugin_name";
 	public static final String EXTRAS_TIME = "extras_time";
 	public static final String EXTRAS_WEEKS = "extras_weeks";
+	public static final String EXTRAS_ALARM_TITLE = "extras_title";
 	public static final String EXTRAS_NEXT_DELAY_IN_MILLIS = "extras_next_delay_in_millis";
 	public static final String EXTRAS_PICKED_ALARM_RESOURCE = "extras_picked_alarm_resource";
 	public static final String EXTRAS_ALARM_SPECIAL_ACTION = "extras_alarm_special_action";
