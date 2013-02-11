@@ -182,7 +182,23 @@ public class AlarmUtil {
         }
 
         return list;
+    }
 
+    /**
+     * 曜日文字列に対応した曜日情報を返します(int[]型).
+     * @param context context.
+     * @param weeks 曜日リスト(区切り文字はカンマのみ)
+     * @return 曜日配列(Calendar.SUNDAY～に対応した数値型配列)
+     */
+    public static int[] getDayOfWeekListInt(Context context, String weeks) {
+        ArrayList<Integer> ar = getDayOfWeekList(context, weeks);
+
+        int[] ret = new int[ar.size()];
+        int i = 0;
+        for (Integer e : ar) {
+            ret[i++] = e.intValue();
+        }
+        return ret;
     }
     
 }
