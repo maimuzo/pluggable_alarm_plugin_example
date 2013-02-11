@@ -19,7 +19,9 @@ public class AlarmUtil {
         PendingIntent pi = createPendingIntentForAlarmService(context, data.alarmSpecialAction, data);
         Log.d(TAG, "set next alarm to AlarmManager after " + delayInMillis + "msec");
         manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delayInMillis, pi);
-        showMessage(context, convertMillisToTimeFromNow(delayInMillis) + "後にアラームをセットしました");
+        String message = convertMillisToTimeFromNow(delayInMillis) + "後にアラームをセットしました";
+        showMessage(context, message);
+        Log.d(TAG, "set next alarm to AlarmManager after " + message);
 	}
 	
 	public static void unsetNextAlarm(Context context, AlarmManager manager, AlarmData data){
@@ -28,11 +30,49 @@ public class AlarmUtil {
         showMessage(context, "アラームを解除しました");
 	}
 	
-	private static String convertMillisToTimeFromNow(long millis){
-		// TODO: 今からmillisミリ秒後の時間を「n日n時n分」で返す
-		return "[実装必要]" + millis + "msec";
-	}
-	
+    /**
+     * 今からmillisミリ秒後の時間を「n日n時n分」で返す
+     * @param millis　アラーム設定時刻
+     * @return
+     */
+    private static String convertMillisToTimeFromNow(long millis) {
+
+        return convertMillisToTimeFromNow(System.currentTimeMillis(), millis);
+    }
+    
+    /**
+     * 2つの時間の差を「n日n時n分」で返す
+     * 
+     * @param befor　起点
+     * @param after　終点
+     * @return　"n日n時n分"
+     */
+    public static String convertMillisToTimeFromNow(long befor, long after) {
+
+        // 日付の差分
+        long one_date_time = 1000 * 60 * 60 * 24;
+        long diffDays = (after - befor) / one_date_time;
+
+        // 時間の差分
+        long one_hour_time = 1000 * 60 * 60;
+        long diffHours = (after - befor - (diffDays * one_date_time)) / one_hour_time;
+
+        // 分の差分
+        long one_minute_time = 1000 * 60;
+        long diffMinute = (after - befor - (diffDays * one_date_time) - (diffHours * one_hour_time)) / one_minute_time;
+       
+        // 文字列を作成する
+        StringBuilder sb = new StringBuilder();
+        sb.append(diffDays);
+        sb.append("日");
+        sb.append(diffHours);
+        sb.append("時");
+        sb.append(diffMinute);
+        sb.append("分");
+
+        return sb.toString();
+    }
+    
     private static PendingIntent createPendingIntentForAlarmService(Context context, String action, AlarmData alarmData){
         Intent i = new Intent();
         alarmData.setForAlarmTo(i);
