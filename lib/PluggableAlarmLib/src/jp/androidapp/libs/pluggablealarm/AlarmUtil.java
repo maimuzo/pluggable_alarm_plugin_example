@@ -35,31 +35,18 @@ public class AlarmUtil {
      * @param millis　アラーム設定時刻
      * @return
      */
-    private static String convertMillisToTimeFromNow(long millis) {
-
-        return convertMillisToTimeFromNow(System.currentTimeMillis(), millis);
-    }
-    
-    /**
-     * 2つの時間の差を「n日n時n分」で返す
-     * 
-     * @param befor　起点
-     * @param after　終点
-     * @return　"n日n時n分"
-     */
-    public static String convertMillisToTimeFromNow(long befor, long after) {
-
+    private static String convertMillisToTimeFromNow(long delayMillis) {
         // 日付の差分
         long one_date_time = 1000 * 60 * 60 * 24;
-        long diffDays = (after - befor) / one_date_time;
+        long diffDays = (delayMillis) / one_date_time;
 
         // 時間の差分
         long one_hour_time = 1000 * 60 * 60;
-        long diffHours = (after - befor - (diffDays * one_date_time)) / one_hour_time;
+        long diffHours = (delayMillis - (diffDays * one_date_time)) / one_hour_time;
 
         // 分の差分
         long one_minute_time = 1000 * 60;
-        long diffMinute = (after - befor - (diffDays * one_date_time) - (diffHours * one_hour_time)) / one_minute_time;
+        long diffMinute = (delayMillis - (diffDays * one_date_time) - (diffHours * one_hour_time)) / one_minute_time;
        
         // 文字列を作成する
         StringBuilder sb = new StringBuilder();
@@ -67,7 +54,7 @@ public class AlarmUtil {
         sb.append("日");
         sb.append(diffHours);
         sb.append("時");
-        sb.append(diffMinute);
+        sb.append(diffMinute + 1);
         sb.append("分");
 
         return sb.toString();
@@ -100,7 +87,6 @@ public class AlarmUtil {
         // 時分を取り出す
         int nowHour = c.get(Calendar.HOUR_OF_DAY);  // 24H指定
         int nowMinute = c.get(Calendar.MINUTE);
-
         // 日をまたぐかどうか？
         // 時間が過去をさしている
         // 時間が同じで、分が同じか過去をさしている場合
@@ -122,7 +108,7 @@ public class AlarmUtil {
         if (addDays > 0) {
             c.add(Calendar.DAY_OF_WEEK, addDays);
         }
-
+        
         return c;
     }
 

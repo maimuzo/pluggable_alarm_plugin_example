@@ -20,4 +20,10 @@ public class IntentParam {
 	public static final String EXTRAS_NEXT_ALARM_SPECIAL_ACTION = "extras_next_alarm_special_action";
 	public static final String EXTRAS_NEXT_SNOOZE_SPECIAL_ACTION = "extras_next_snooze_special_action";
 	public static final String EXTRAS_ALARM_ID = "extras_alarm_id";
+	public static final String EXTRAS_RESULT = "extra_result";
+	public static final String EXTRAS_RESULT_CREATED = "extra_result_created";
+	public static final String EXTRAS_RESULT_UPDATED = "extra_result_updated";
+	public static final String EXTRAS_RESULT_CALCULATED = "extra_result_calculated";
+	public static final String EXTRAS_RESULT_DELETED = "extra_result_deleted";
+	
 }

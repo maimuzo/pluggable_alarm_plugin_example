@@ -6,7 +6,7 @@ public class AlarmData{
 	public String time;
 	public String weeks;
     public String title;
-    public String pluginNanme;
+    public String pluginName;
 	public boolean isEnable;
 	public long nextDelayInMillis;
 	public String pickedAlarmResource;
@@ -21,7 +21,7 @@ public class AlarmData{
 		alarmData.time = data.getStringExtra(IntentParam.EXTRAS_TIME);
         alarmData.weeks = data.getStringExtra(IntentParam.EXTRAS_WEEKS);
         alarmData.title = data.getStringExtra(IntentParam.EXTRAS_ALARM_TITLE);
-		alarmData.pluginNanme = data.getStringExtra(IntentParam.EXTRAS_PLUGIN_NAME);
+		alarmData.pluginName = data.getStringExtra(IntentParam.EXTRAS_PLUGIN_NAME);
 		alarmData.isEnable = true;
 		alarmData.nextDelayInMillis = data.getLongExtra(IntentParam.EXTRAS_NEXT_DELAY_IN_MILLIS, 0);
 		alarmData.pickedAlarmResource = data.getStringExtra(IntentParam.EXTRAS_PICKED_ALARM_RESOURCE);
@@ -43,8 +43,8 @@ public class AlarmData{
 	
 	@Override
 	public String toString() {
-        return "AlarmData [time=" + time + ", weeks=" + weeks + ", title=" + title + ", pluginNanme="
-                + pluginNanme + ", isEnable=" + isEnable + ", nextDelayInMillis="
+        return "AlarmData [time=" + time + ", weeks=" + weeks + ", title=" + title + ", pluginName="
+                + pluginName + ", isEnable=" + isEnable + ", nextDelayInMillis="
                 + nextDelayInMillis + ", alarmFilePath=" + pickedAlarmResource
                 + ", alarmSpecialAction=" + alarmSpecialAction
                 + ", editSpecialAction=" + editSpecialAction
