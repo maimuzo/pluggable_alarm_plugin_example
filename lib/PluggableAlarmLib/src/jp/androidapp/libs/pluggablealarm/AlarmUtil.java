@@ -120,7 +120,7 @@ public class AlarmUtil {
      */
     public static int getNextDaysOfWeek(Calendar c, int[] dowList) {
         
-        if (null == dowList) {
+        if (null == dowList || dowList.length == 0) {
             // 曜日リストに何も入っていない場合は現在の曜日を返す
             return c.get(Calendar.DAY_OF_WEEK);
         }        
