@@ -32,7 +32,7 @@ public class AlarmData{
 		alarmData.alarmId = data.getIntExtra(IntentParam.EXTRAS_ALARM_ID, 0);
 		return alarmData;
 	}
-	
+
 	public void setForAlarmTo(Intent intent){
 		intent.putExtra(IntentParam.EXTRAS_PICKED_ALARM_RESOURCE, pickedAlarmResource);
 		intent.putExtra(IntentParam.EXTRAS_ALARM_SPECIAL_ACTION, alarmSpecialAction);
