@@ -227,4 +227,34 @@ public class AlarmUtil {
         return ret;
     }
     
+    /**
+     * アラーム起動までのミリ秒(差分時間)を返す
+     * @param hour
+     * @param minute
+     * @param alarmDaysOfWeek
+     * @return
+     */
+    public static long getNextDelayInMillisForNextAlarm(Context context, int hour, int minute, String alarmDaysOfWeek) {
+        // アラーム指定曜日から曜日リストを作成
+//      int[] dayOfWeekList = {1,2,3,4,5,6,7};
+        int[] dayOfWeekList = getDayOfWeekListInt(context, alarmDaysOfWeek);
+        
+        // アラーム起動日時のカレンダーオブジェクトを作成
+        Calendar nextAlarm = calculateAlarm(hour, minute, dayOfWeekList);
+
+        final int year = nextAlarm.get(Calendar.YEAR);
+        final int month = nextAlarm.get(Calendar.MONTH);
+        final int day = nextAlarm.get(Calendar.DAY_OF_MONTH);
+        final int hour_r = nextAlarm.get(Calendar.HOUR_OF_DAY);
+        final int minute_r = nextAlarm.get(Calendar.MINUTE);
+        final int dayOfWeek_r = nextAlarm.get(Calendar.DAY_OF_WEEK);
+        Log.v("year/month/day hour:minute:second", year + "/" + (month + 1) + "/" + day + "(" + dayOfWeek_r + ")" + " "
+                + hour_r + ":"
+                + minute_r);
+        
+        // 返すのは現在時刻からの差(ミリ秒)
+        long nextDelayInMillis = nextAlarm.getTimeInMillis() - System.currentTimeMillis();
+        return nextDelayInMillis;
+    }
+
 }

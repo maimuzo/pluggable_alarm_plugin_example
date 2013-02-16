@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.TimePicker;
 
 /**
+ * see: http://code.google.com/p/relog/source/browse/trunk/CustomLibrary/CustomLibraryA/src/jp/xii/relog/customlibrary/preference/TimePickerPreference.java
  * @author Iori
  *
  */
