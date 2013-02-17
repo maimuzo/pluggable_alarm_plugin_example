@@ -3,11 +3,14 @@ package jp.androidapp.libs.pluggablealarm;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
@@ -257,4 +260,12 @@ public class AlarmUtil {
         return nextDelayInMillis;
     }
 
+    public static void dumpCurrentSharedPrerence(SharedPreferences pref){
+    	Map<String, ?> map = pref.getAll();
+    	Iterator<String> ite = map.keySet().iterator();
+    	while(ite.hasNext()){
+    		String key = ite.next();
+    		Log.d(TAG, key + " : " + String.valueOf(map.get(key)));
+    	}
+    }
 }
