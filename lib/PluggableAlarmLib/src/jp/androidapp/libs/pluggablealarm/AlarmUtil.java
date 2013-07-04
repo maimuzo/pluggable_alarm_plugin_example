@@ -16,26 +16,42 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class AlarmUtil {
-	private static final String TAG = "AlarmUtil";
-	
-	public static void setNextAlarm(Context context, AlarmManager manager, AlarmData data, long delayInMillis){
+    private static final String TAG = "AlarmUtil";
+
+    /**
+     * delayInMillisミリ秒後に次回アラームをセットする
+     * 
+     * @param context
+     * @param manager
+     * @param data
+     * @param delayInMillis
+     */
+    public static void setNextAlarm(Context context,
+                                    AlarmManager manager,
+                                    AlarmData data,
+                                    long delayInMillis) {
+        // アラームをセット
         PendingIntent pi = createPendingIntentForAlarmService(context, data.alarmSpecialAction, data);
-        Log.d(TAG, "set next alarm to AlarmManager after " + delayInMillis + "msec");
         manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delayInMillis, pi);
+        // Toastメッセージを表示
         String message = convertMillisToTimeFromNow(delayInMillis) + "後にアラームをセットしました";
         showMessage(context, message);
-        Log.d(TAG, "set next alarm to AlarmManager after " + message);
-	}
-	
-	public static void unsetNextAlarm(Context context, AlarmManager manager, AlarmData data){
+        Log.d(TAG, "set next alarm to AlarmManager after " + message + " (delay " + delayInMillis + " msec)");
+    }
+
+    public static void unsetNextAlarm(Context context,
+                                      AlarmManager manager,
+                                      AlarmData data) {
         PendingIntent pi = createPendingIntentForAlarmService(context, data.alarmSpecialAction, data);
         manager.cancel(pi);
         showMessage(context, "アラームを解除しました");
-	}
-	
+    }
+
     /**
-     * 今からmillisミリ秒後の時間を「n日n時n分」で返す
-     * @param millis　アラーム設定時刻
+     * 今からmillisミリ秒後の時間を「n日n時n分」で返す 0日となる時は日を省略する。 0時となる時は時を省略する。
+     * 
+     * @param millis
+     *            　アラーム設定時刻
      * @return
      */
     private static String convertMillisToTimeFromNow(long delayMillis) {
@@ -50,20 +66,26 @@ public class AlarmUtil {
         // 分の差分
         long one_minute_time = 1000 * 60;
         long diffMinute = (delayMillis - (diffDays * one_date_time) - (diffHours * one_hour_time)) / one_minute_time;
-       
+
         // 文字列を作成する
         StringBuilder sb = new StringBuilder();
-        sb.append(diffDays);
-        sb.append("日");
-        sb.append(diffHours);
-        sb.append("時");
+        if (0 != diffDays) {
+            sb.append(diffDays);
+            sb.append("日");
+        }
+        if (0 != diffHours) {
+            sb.append(diffHours);
+            sb.append("時");
+        }
         sb.append(diffMinute + 1);
         sb.append("分");
 
         return sb.toString();
     }
-    
-    private static PendingIntent createPendingIntentForAlarmService(Context context, String action, AlarmData alarmData){
+
+    private static PendingIntent createPendingIntentForAlarmService(Context context,
+                                                                    String action,
+                                                                    AlarmData alarmData) {
         Intent i = new Intent();
         alarmData.setForAlarmTo(i);
         i.setAction(action);
@@ -71,31 +93,34 @@ public class AlarmUtil {
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_ONE_SHOT);
         return pi;
     }
-    
-    private static void showMessage(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+    private static void showMessage(Context context,
+                                    String message) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
-    
+
     /**
      * 時刻、分から次にアラームを鳴らす日付のカレンダーオブジェクトを生成します.
-     * @param c must be set to today
+     * 
+     * @param c
+     *            must be set to today
      */
-    public static Calendar calculateAlarm(int hour, int minute,
-            int[] daysOfWeek) {
+    public static Calendar calculateAlarm(int hour,
+                                          int minute,
+                                          int[] daysOfWeek) {
 
         // 現在日時でカレンダーオブジェクト作成
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
 
         // 時分を取り出す
-        int nowHour = c.get(Calendar.HOUR_OF_DAY);  // 24H指定
+        int nowHour = c.get(Calendar.HOUR_OF_DAY); // 24H指定
         int nowMinute = c.get(Calendar.MINUTE);
         // 日をまたぐかどうか？
         // 時間が過去をさしている
         // 時間が同じで、分が同じか過去をさしている場合
         // if alarm is behind current time, advance one day
-        if (hour < nowHour  ||
-            hour == nowHour && minute <= nowMinute) {
+        if (hour < nowHour || hour == nowHour && minute <= nowMinute) {
             // 翌日の時刻を返す
             c.add(Calendar.DAY_OF_YEAR, 1);
         }
@@ -104,30 +129,30 @@ public class AlarmUtil {
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
-
         // 次のアラーム鳴動曜日までに、加算する日数を計算する
-        int nextRingDaysOfWeek = getNextDaysOfWeek(c,daysOfWeek);
-        int addDays = getAddDay(c,nextRingDaysOfWeek);
+        int nextRingDaysOfWeek = getNextDaysOfWeek(c, daysOfWeek);
+        int addDays = getAddDay(c, nextRingDaysOfWeek);
         if (addDays > 0) {
             c.add(Calendar.DAY_OF_WEEK, addDays);
         }
-        
+
         return c;
     }
 
     /**
-     * 次のアラーム鳴動は何曜日かを返す.
-     * 指定した日付の曜日が曜日配列の中に存在する場合は、その曜日を返す.
-     * 曜日配列　月水金 = {Calendar.MONDAY,Calendar.WEDNESDAY,Calendar.WEDNESDAY,Calendar.FRIDAY}
+     * 次のアラーム鳴動は何曜日かを返す. 指定した日付の曜日が曜日配列の中に存在する場合は、その曜日を返す. 曜日配列　月水金 =
+     * {Calendar.MONDAY,Calendar.WEDNESDAY,Calendar.WEDNESDAY,Calendar.FRIDAY}
+     * 
      * @return 次のアラーム鳴動曜日 Calendar.MONDAY~
      */
-    public static int getNextDaysOfWeek(Calendar c, int[] dowList) {
-        
+    public static int getNextDaysOfWeek(Calendar c,
+                                        int[] dowList) {
+
         if (null == dowList || dowList.length == 0) {
             // 曜日リストに何も入っていない場合は現在の曜日を返す
             return c.get(Calendar.DAY_OF_WEEK);
-        }        
-        
+        }
+
         // 現在の曜日を求める
         int nowDOW = c.get(Calendar.DAY_OF_WEEK);
         for (int i = 0; i < dowList.length; i++) {
@@ -137,26 +162,27 @@ public class AlarmUtil {
                 return dowList[i];
             }
         }
-        
+
         // 見つからない場合は配列の先頭が次のアラーム鳴動曜日となる
         // ex 今：土曜日　配列：月水金　→　次に鳴動させるのは月曜日
-        return dowList[0];    
+        return dowList[0];
     }
-    
+
     /**
      * 次のアラーム鳴動曜日までに、加算する日数を返す
      */
-    public static int getAddDay(Calendar c, int nextDOW) {
-        
+    public static int getAddDay(Calendar c,
+                                int nextDOW) {
+
         int addDays = 0;
-        
+
         // 現在の曜日を求める
         int nowDOW = c.get(Calendar.DAY_OF_WEEK);
-        
-        if(nowDOW == nextDOW){
+
+        if (nowDOW == nextDOW) {
             // 曜日が同一の場合は日付は加算しない
             addDays = 0;
-        }else if(nextDOW > nowDOW){
+        } else if (nextDOW > nowDOW) {
             // 次の曜日のほうが大きい曜日の場合
             for (int i = 0; i < 7; i++) {
 
@@ -166,7 +192,7 @@ public class AlarmUtil {
                     break;
                 }
             }
-        }else{
+        } else {
             // 次の曜日のほうが小さい曜日の場合
             // 曜日が同じになるまで減算する
             for (int i = 0; i < 7; i++) {
@@ -176,17 +202,20 @@ public class AlarmUtil {
                 }
             }
         }
-        
+
         // 計算した日付を返す
         return addDays;
     }
-    
+
     /**
      * 曜日文字列に対応した曜日情報を返します.
-     * @param weeks 曜日リスト(区切り文字はカンマのみ)
+     * 
+     * @param weeks
+     *            曜日リスト(区切り文字はカンマのみ)
      * @return 曜日配列(Calendar.SUNDAY～に対応した数値型配列)
      */
-    public static ArrayList<Integer> getDayOfWeekList(Context context, String weeks) {
+    public static ArrayList<Integer> getDayOfWeekList(Context context,
+                                                      String weeks) {
 
         // 文字列をカンマで区切る
         String[] weeklist = weeks.split(",");
@@ -215,11 +244,15 @@ public class AlarmUtil {
 
     /**
      * 曜日文字列に対応した曜日情報を返します(int[]型).
-     * @param context context.
-     * @param weeks 曜日リスト(区切り文字はカンマのみ)
+     * 
+     * @param context
+     *            context.
+     * @param weeks
+     *            曜日リスト(区切り文字はカンマのみ)
      * @return 曜日配列(Calendar.SUNDAY～に対応した数値型配列)
      */
-    public static int[] getDayOfWeekListInt(Context context, String weeks) {
+    public static int[] getDayOfWeekListInt(Context context,
+                                            String weeks) {
         ArrayList<Integer> ar = getDayOfWeekList(context, weeks);
 
         int[] ret = new int[ar.size()];
@@ -229,19 +262,23 @@ public class AlarmUtil {
         }
         return ret;
     }
-    
+
     /**
      * アラーム起動までのミリ秒(差分時間)を返す
+     * 
      * @param hour
      * @param minute
      * @param alarmDaysOfWeek
      * @return
      */
-    public static long getNextDelayInMillisForNextAlarm(Context context, int hour, int minute, String alarmDaysOfWeek) {
+    public static long getNextDelayInMillisForNextAlarm(Context context,
+                                                        int hour,
+                                                        int minute,
+                                                        String alarmDaysOfWeek) {
         // アラーム指定曜日から曜日リストを作成
-//      int[] dayOfWeekList = {1,2,3,4,5,6,7};
+        // int[] dayOfWeekList = {1,2,3,4,5,6,7};
         int[] dayOfWeekList = getDayOfWeekListInt(context, alarmDaysOfWeek);
-        
+
         // アラーム起動日時のカレンダーオブジェクトを作成
         Calendar nextAlarm = calculateAlarm(hour, minute, dayOfWeekList);
 
@@ -251,21 +288,35 @@ public class AlarmUtil {
         final int hour_r = nextAlarm.get(Calendar.HOUR_OF_DAY);
         final int minute_r = nextAlarm.get(Calendar.MINUTE);
         final int dayOfWeek_r = nextAlarm.get(Calendar.DAY_OF_WEEK);
-        Log.v("year/month/day hour:minute:second", year + "/" + (month + 1) + "/" + day + "(" + dayOfWeek_r + ")" + " "
-                + hour_r + ":"
-                + minute_r);
-        
+        Log.v("year/month/day hour:minute:second", year
+                                                   + "/"
+                                                   + (month + 1)
+                                                   + "/"
+                                                   + day
+                                                   + "("
+                                                   + dayOfWeek_r
+                                                   + ")"
+                                                   + " "
+                                                   + hour_r
+                                                   + ":"
+                                                   + minute_r);
+
         // 返すのは現在時刻からの差(ミリ秒)
         long nextDelayInMillis = nextAlarm.getTimeInMillis() - System.currentTimeMillis();
         return nextDelayInMillis;
     }
 
-    public static void dumpCurrentSharedPrerence(SharedPreferences pref){
-    	Map<String, ?> map = pref.getAll();
-    	Iterator<String> ite = map.keySet().iterator();
-    	while(ite.hasNext()){
-    		String key = ite.next();
-    		Log.d(TAG, key + " : " + String.valueOf(map.get(key)));
-    	}
+    /**
+     * prefの中身を全てログに書き出す
+     * 
+     * @param pref
+     */
+    public static void dumpCurrentSharedPrerence(SharedPreferences pref) {
+        Map<String, ?> map = pref.getAll();
+        Iterator<String> ite = map.keySet().iterator();
+        while (ite.hasNext()) {
+            String key = ite.next();
+            Log.d(TAG, "dump " + key + " : " + String.valueOf(map.get(key)));
+        }
     }
 }
