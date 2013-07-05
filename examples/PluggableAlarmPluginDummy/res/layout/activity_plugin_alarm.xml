@@ -5,17 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     >
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="dummyプラグインのアラームがなる画面"
-        />
     <Button
         android:id="@+id/alarm_plugin_button_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="止める"
+        android:text="アラームを止める"
+        android:layout_marginTop="32dp"
         />
 </LinearLayout>

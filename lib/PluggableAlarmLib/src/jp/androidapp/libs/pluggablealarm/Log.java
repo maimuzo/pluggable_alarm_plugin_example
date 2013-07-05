@@ -10,7 +10,7 @@ import com.google.analytics.tracking.android.Tracker;
  */
 public class Log {
     public static boolean isDebugMode = true;
-    private static int MAX_LOG_LENGTH = 150; // 150文字
+    private static int MAX_LOG_LENGTH = 300; // 文字数
     public static final int INFO = android.util.Log.INFO;
     private static Tracker sTracker;
     static {
