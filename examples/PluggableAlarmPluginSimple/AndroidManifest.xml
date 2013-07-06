@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="jp.androidapp.apps.pluggablealarm.plugin.simple"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="15" />
+<!-- 
+BaseAlarmActivityで使用しているので、これを継承するActivityは以下のパーミッションが必要
+ -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="jp.androidapp.apps.pluggablealarm.plugin.simple.PluginSettingActivity"
+            android:label="@string/setting_name" >
+            
+<!-- 
+プラグインとして動くアラーム設定画面は
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+ではなく
+            <intent-filter>
+                <action android:name="jp.androidapp.tamesarerualarm.ACTION_OPEN_ALARM_SETTING" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+を使うこと。
+このアクションで起動する仕様なので、コピペで良い。
+ -->            
+            
+            <intent-filter>
+                <action android:name="jp.androidapp.apps.pluggablealarm.ACTION_OPEN_ALARM_SETTING" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+<!--
+既存のアラーム設定編集用に、このプラグイン独自のアクションでも呼べるようにする。
+設定画面での編集→ACTION_OPEN_ALARM_SETTING
+次回アラーム時間の計算(関数的に使用)→ACTION_NEXT_ALARM
+次回スヌーズ時間の計算(関数的に使用)→ACTION_NEXT_SNOOZE
+上記3つが必要。担当するActivityは別でも良い。
+これはこのプラグインのパッケージ名+".ACTION_OPEN_ALARM_SETTING"で良いと思われるが、ユニークであれば自由にしてよい。
+カテゴリは
+<category android:name="android.intent.category.DEFAULT" />
+で良い。
+--> 
+            <intent-filter>
+                <action android:name="jp.androidapp.apps.pluggablealarm.plugin.simple.ACTION_OPEN_ALARM_SETTING" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="jp.androidapp.apps.pluggablealarm.plugin.simple.ACTION_NEXT_ALARM" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="jp.androidapp.apps.pluggablealarm.plugin.simple.ACTION_NEXT_SNOOZE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="jp.androidapp.apps.pluggablealarm.plugin.simple.PluginAlarmActivity"
+            android:label="@string/app_name"
+            />
+<!-- 
+本体からAlarmManagerにEXTRAS_ALARM_SPECIAL_ACTIONで渡したActionでBroadcastするので、
+それを受け取りActivityなりServiceなりを起動するReceiverを用意する。
+当然EXTRAS_ALARM_SPECIAL_ACTIONで渡したこのプラグイン用のActionを受け付けるようにintent-filterを設定する
+
+"jp.androidapp.apps.pluggablealarm.plugin.simple.ACTION_ALARM"
+の部分は、このアプリ独自のものにすること。(パッケージ名+".ACTION_ALARM"推奨)
+ -->
+    	<receiver android:name="jp.androidapp.apps.pluggablealarm.plugin.simple.PluginAlarmReceiver" android:process=":remote">
+            <intent-filter>
+    	    	<action android:name="jp.androidapp.apps.pluggablealarm.plugin.simple.ACTION_ALARM" />
+    	    </intent-filter>
+    	</receiver> 
+<!-- 
+予約が消えてしまう再起動時や、時刻を調整した時に、有効なアラームを一気に再度予約するため、
+本体側で有効なアラームをEXTRAS_RESCHEDULE_SPECIAL_ACTIONで渡したActionにBroadcastするので、
+それを受け取りServiceなりを起動するReceiverを用意する。
+当然EXTRAS_RESCHEDULE_SPECIAL_ACTIONで渡したこのプラグイン用のActionを受け付けるようにintent-filterを設定する
+
+"jp.androidapp.apps.pluggablealarm.plugin.simple.ACTION_RESCHEDULE" 
+の部分は、このアプリ独自のものにすること。(パッケージ名+".ACTION_RESCHEDULE"推奨)
+ -->
+    	<receiver android:name=".AlarmRescheduleReceiver" android:process=":remote">
+            <intent-filter>
+    	    	<action android:name="jp.androidapp.apps.pluggablealarm.plugin.simple.ACTION_RESCHEDULE" />
+    	    </intent-filter>
+    	</receiver> 
+    	<service android:name=".RescheduleService" />
+    </application>
+
+</manifest>

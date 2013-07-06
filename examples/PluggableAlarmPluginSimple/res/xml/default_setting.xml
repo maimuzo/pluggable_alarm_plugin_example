@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory android:title="基本情報">
+        <!-- see: http://code.google.com/p/relog/source/browse/trunk/CustomLibrary/CustomLibraryA/src/jp/xii/relog/customlibrary/preference/TimePickerPreference.java -->
+        <jp.xii.relog.customlibrary.preference.TimePickerPreference
+			android:key="time"
+			android:title="時刻"
+			android:summary="現在の設定 : "
+			android:dialogTitle="時刻"
+			android:dialogMessage="アラームを何時に鳴らしますか？"
+			defaultHour="7"
+			defaultMinute="0"
+			is24Hour="true"
+			/>        
+        <CheckBoxPreference android:key="use_snooze" android:title="スヌーズ" android:summaryOn="使う" android:summaryOff="使わない"/>
+        <ListPreference android:dependency="use_snooze" android:title="スヌーズ間隔" android:key="snooze_interval" android:entries="@array/snooze_interval_entries" android:entryValues="@array/snooze_interval_entryvalues"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="繰り返し設定">
+        <CheckBoxPreference android:summaryOn="鳴らす" android:key="sun" android:title="日曜日" android:summaryOff="鳴らさない"/>
+        <CheckBoxPreference android:summaryOn="鳴らす" android:key="mon" android:title="月曜日" android:summaryOff="鳴らさない"/>
+        <CheckBoxPreference android:summaryOn="鳴らす" android:key="tue" android:title="火曜日" android:summaryOff="鳴らさない"/>
+        <CheckBoxPreference android:summaryOn="鳴らす" android:key="wed" android:title="水曜日" android:summaryOff="鳴らさない"/>
+        <CheckBoxPreference android:summaryOn="鳴らす" android:key="thu" android:title="木曜日" android:summaryOff="鳴らさない"/>
+        <CheckBoxPreference android:summaryOn="鳴らす" android:key="fri" android:title="金曜日" android:summaryOff="鳴らさない"/>
+        <CheckBoxPreference android:summaryOn="鳴らす" android:key="sat" android:title="土曜日" android:summaryOff="鳴らさない"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="アラーム設定">
+        <RingtonePreference android:title="アラーム音" android:key="ringtone" android:ringtoneType="alarm"/>
+        <CheckBoxPreference android:title="バイブ機能" android:key="is_viblate_on" android:summaryOff="使わない" android:summaryOn="使う"/>
+        <ListPreference  android:title="アラームの音量(最大音量)" android:key="max_volume" android:entries="@array/volume_entries" android:entryValues="@array/volume_entryvalues"/>
+        <CheckBoxPreference  android:summaryOn="大きくする" android:key="need_to_incliment_volume" android:defaultValue="true" android:summaryOff="大きくしない(最初から最大音量)" android:title="アラーム音を徐々に大きくするか"/>
+        <ListPreference android:title="アラーム音量(最小音量)" android:entries="@array/volume_entries" android:key="min_volume" android:entryValues="@array/volume_entryvalues" android:dependency="need_to_incliment_volume"/>
+    </PreferenceCategory>
+    
+
+</PreferenceScreen>
