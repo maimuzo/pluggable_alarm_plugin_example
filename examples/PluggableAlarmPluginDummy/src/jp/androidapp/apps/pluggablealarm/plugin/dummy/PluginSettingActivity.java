@@ -17,6 +17,7 @@ public class PluginSettingActivity
     private static final String ACTION_PLUGIN_EDIT = sPackageName + ".ACTION_OPEN_ALARM_SETTING";
     private static final String ACTION_PLUGIN_NEXT_ALARM = sPackageName + ".ACTION_NEXT_ALARM";
     private static final String ACTION_PLUGIN_NEXT_SNOOZE = sPackageName + ".ACTION_NEXT_SNOOZE";
+    private static final String ACTION_PLUGIN_RESCHEDULE = sPackageName + ".ACTION_RESCHEDULE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +25,9 @@ public class PluginSettingActivity
 
         Intent data = getIntent();
 
-        if (IntentParam.ACTION_DEFUALT_NEXT_ALARM.equals(data.getAction())) {
+        if (ACTION_PLUGIN_NEXT_ALARM.equals(data.getAction())) {
             forNextAlarm(data);
-        } else if (IntentParam.ACTION_DEFUALT_NEXT_SNOOZE.equals(data.getAction())) {
+        } else if (ACTION_PLUGIN_NEXT_SNOOZE.equals(data.getAction())) {
             forNextSnooze(data);
         } else {
             setContentView(R.layout.activity_plugin_setting);
@@ -53,6 +54,7 @@ public class PluginSettingActivity
                 data.putExtra(IntentParam.EXTRAS_EDIT_SPECIAL_ACTION, ACTION_PLUGIN_EDIT);
                 data.putExtra(IntentParam.EXTRAS_NEXT_ALARM_SPECIAL_ACTION, ACTION_PLUGIN_NEXT_ALARM);
                 data.putExtra(IntentParam.EXTRAS_NEXT_SNOOZE_SPECIAL_ACTION, ACTION_PLUGIN_NEXT_SNOOZE);
+                data.putExtra(IntentParam.EXTRAS_RESCHEDULE_SPECIAL_ACTION, ACTION_PLUGIN_RESCHEDULE);
                 data.putExtra(IntentParam.EXTRAS_ALARM_ID, 10); // このプラグイン毎にユニークなID
                 setResult(RESULT_OK, data);
                 finish();
@@ -91,6 +93,7 @@ public class PluginSettingActivity
         data.putExtra(IntentParam.EXTRAS_EDIT_SPECIAL_ACTION, ACTION_PLUGIN_EDIT);
         data.putExtra(IntentParam.EXTRAS_NEXT_ALARM_SPECIAL_ACTION, ACTION_PLUGIN_NEXT_ALARM);
         data.putExtra(IntentParam.EXTRAS_NEXT_SNOOZE_SPECIAL_ACTION, ACTION_PLUGIN_NEXT_SNOOZE);
+        data.putExtra(IntentParam.EXTRAS_RESCHEDULE_SPECIAL_ACTION, ACTION_PLUGIN_RESCHEDULE);
         data.putExtra(IntentParam.EXTRAS_ALARM_ID, 10); // このプラグイン毎にユニークなID
         setResult(RESULT_OK, data);
         finish();
@@ -106,6 +109,7 @@ public class PluginSettingActivity
         data.putExtra(IntentParam.EXTRAS_EDIT_SPECIAL_ACTION, ACTION_PLUGIN_EDIT);
         data.putExtra(IntentParam.EXTRAS_NEXT_ALARM_SPECIAL_ACTION, ACTION_PLUGIN_NEXT_ALARM);
         data.putExtra(IntentParam.EXTRAS_NEXT_SNOOZE_SPECIAL_ACTION, ACTION_PLUGIN_NEXT_SNOOZE);
+        data.putExtra(IntentParam.EXTRAS_RESCHEDULE_SPECIAL_ACTION, ACTION_PLUGIN_RESCHEDULE);
         data.putExtra(IntentParam.EXTRAS_ALARM_ID, 10); // このプラグイン毎にユニークなID
         setResult(RESULT_OK, data);
         finish();

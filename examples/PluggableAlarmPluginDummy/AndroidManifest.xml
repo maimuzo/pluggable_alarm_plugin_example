@@ -12,7 +12,9 @@ BaseAlarmActivityで使用しているので、これを継承するActivityは�
  -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
-    
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+	
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -73,12 +75,30 @@ BaseAlarmActivityで使用しているので、これを継承するActivityは�
 本体からAlarmManagerにEXTRAS_ALARM_SPECIAL_ACTIONで渡したActionでBroadcastするので、
 それを受け取りActivityなりServiceなりを起動するReceiverを用意する。
 当然EXTRAS_ALARM_SPECIAL_ACTIONで渡したこのプラグイン用のActionを受け付けるようにintent-filterを設定する
+
+"jp.androidapp.apps.pluggablealarm.plugin.dummy.ACTION_ALARM"
+の部分は、このアプリ独自のものにすること。(パッケージ名+".ACTION_ALARM"推奨)
  -->
     	<receiver android:name="jp.androidapp.apps.pluggablealarm.plugin.dummy.PluginAlarmReceiver" android:process=":remote">
             <intent-filter>
     	    	<action android:name="jp.androidapp.apps.pluggablealarm.plugin.dummy.ACTION_ALARM" />
     	    </intent-filter>
     	</receiver> 
+<!-- 
+予約が消えてしまう再起動時や、時刻を調整した時に、有効なアラームを一気に再度予約するため、
+本体側で有効なアラームをEXTRAS_RESCHEDULE_SPECIAL_ACTIONで渡したActionにBroadcastするので、
+それを受け取りServiceなりを起動するReceiverを用意する。
+当然EXTRAS_RESCHEDULE_SPECIAL_ACTIONで渡したこのプラグイン用のActionを受け付けるようにintent-filterを設定する
+
+"jp.androidapp.apps.pluggablealarm.plugin.dummy.ACTION_RESCHEDULE" 
+の部分は、このアプリ独自のものにすること。(パッケージ名+".ACTION_RESCHEDULE"推奨)
+ -->
+    	<receiver android:name=".AlarmRescheduleReceiver" android:process=":remote">
+            <intent-filter>
+    	    	<action android:name="jp.androidapp.apps.pluggablealarm.plugin.dummy.ACTION_RESCHEDULE" />
+    	    </intent-filter>
+    	</receiver> 
+    	<service android:name=".RescheduleService" />
     </application>
 
 </manifest>
